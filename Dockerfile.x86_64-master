@@ -2,8 +2,7 @@ FROM amd64/debian:buster-slim as builder
 RUN mkdir -p /fluent-bit/bin /fluent-bit/etc /fluent-bit/log /tmp/fluent-bit-master/
 ENV DEBIAN_FRONTEND noninteractive
 
-ADD . /source
-WORKDIR /source
+ADD . /tmp/fluent-bit
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -21,10 +20,11 @@ RUN apt-get update && \
     libpq-dev \
     postgresql-server-dev-all \
     flex \
-    bison \
-    && cd /source
+    bison
 
-RUN cd /source && cmake -DFLB_RELEASE=On \
+WORKDIR /tmp/fluent-bit/build/
+
+RUN cmake -DFLB_RELEASE=On \
           -DFLB_TRACE=Off \
           -DFLB_JEMALLOC=On \
           -DFLB_TLS=On \
@@ -35,8 +35,8 @@ RUN cd /source && cmake -DFLB_RELEASE=On \
           -DFLB_OUT_KAFKA=On \
           -DFLB_OUT_PGSQL=On ..
 
-RUN cd /source && make -j $(getconf _NPROCESSORS_ONLN)
-RUN cd /source && install bin/fluent-bit /fluent-bit/bin/
+RUN make -j $(getconf _NPROCESSORS_ONLN)
+RUN install bin/fluent-bit /fluent-bit/bin/
 
 # Configuration files
 COPY conf/fluent-bit.conf \
