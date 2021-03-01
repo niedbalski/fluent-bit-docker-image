@@ -21,7 +21,8 @@ RUN apt-get update && \
     libpq-dev \
     postgresql-server-dev-all \
     flex \
-    bison
+    bison \
+    && cd /source
 
 RUN cmake -DFLB_RELEASE=On \
           -DFLB_TRACE=Off \
