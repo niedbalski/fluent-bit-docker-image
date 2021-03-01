@@ -2,6 +2,9 @@ FROM amd64/debian:buster-slim as builder
 RUN mkdir -p /fluent-bit/bin /fluent-bit/etc /fluent-bit/log /tmp/fluent-bit-master/
 ENV DEBIAN_FRONTEND noninteractive
 
+ADD . /source
+WORKDIR /source
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
@@ -20,8 +23,6 @@ RUN apt-get update && \
     flex \
     bison
 
-ADD . /source
-WORKDIR /source
 RUN cmake -DFLB_RELEASE=On \
           -DFLB_TRACE=Off \
           -DFLB_JEMALLOC=On \
