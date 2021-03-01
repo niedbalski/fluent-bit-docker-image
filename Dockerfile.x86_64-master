@@ -20,7 +20,8 @@ RUN apt-get update && \
     flex \
     bison
 
-WORKDIR ../source
+ADD ../source /source
+WORKDIR /source
 RUN cmake -DFLB_RELEASE=On \
           -DFLB_TRACE=Off \
           -DFLB_JEMALLOC=On \
